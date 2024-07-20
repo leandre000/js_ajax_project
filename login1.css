@@ -1,0 +1,30 @@
+*{
+    font-size: medium;
+}
+
+
+#login_form{
+    background-color: aqua;
+    border: none;
+    width: 30%;
+    margin-top: 10%;
+    margin-left: 20%;
+    padding: 10px;
+    border-bottom: 1px solid black;
+}
+a{
+    text-decoration: none;
+}
+button{
+    width: 30%;
+    margin-left: 30%;
+}
+label{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+h1{
+    padding: 10px;
+    text-align: center;
+    color: blue;
+}

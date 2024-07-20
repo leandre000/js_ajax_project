@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<style>
+    table,
+    td,
+    th,
+    tr {
+        border-bottom: 1px groove;
+        border-collapse: collapse;
+        padding: 19px;
+
+
+    }
+
+    th {
+        background-color: green;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f4f4f4;
+    }
+
+    td {
+        padding: 10px;
+    }
+
+    table {
+        text-align: center;
+        margin-left: 15%;
+        font-size: xx-large;
+        margin-top: 2%;
+    }
+
+    * {
+        color: white;
+        background-color: black;
+    }
+
+    button {
+        background-color: green;
+    }
+
+    a {
+        margin-left: 70%;
+        margin-bottom: 20%;
+        color: chartreuse;
+        font-size: x-large;
+        border: 1px solid white;
+        margin-top: 50%;
+        text-decoration: none;
+        color: aqua;
+        background-color: transparent;
+    }
+</style>
+
+<body>
+
+    <a href="index.html">Add a new facility</a>
+    <table id="facilityList">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Schedules</th>
+                <th>Logs</th>
+                <th>Inventory</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody class="table_body">
+
+        </tbody>
+    </table>
+    <form id="editForm">
+        <input type="hidden" id="editId">
+        <input type="text" placeholder="schedules" id="editSchedules">
+        <input type="text" placeholder="inventory" id="editInventory">
+        <input type="text" placeholder="logs"      id="editLogs">
+        <button type="submit">Update</button>
+    </form>
+    
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById('editForm').style.display = 'none';
+            document.getElementById("editForm").addEventListener("submit", (e) => {
+                e.preventDefault();
+                updateFacility()
+            }
+            )
+            loadFacilities();
+        })
+
+        function loadFacilities() {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        displayFacilities(JSON.parse(xhr.responseText));
+                    } else {
+                        console.error('Failed to load facilities.');
+                    }
+                }
+            };
+            xhr.open('GET', 'api.php', true);
+            xhr.send();
+        }
+
+
+        function displayFacilities(facilities) {
+            var facilityList = document.getElementById('facilityList')
+            var table_body = document.querySelector(".table_body");
+
+            facilities.forEach(function (facilities) {
+                var tr = document.createElement('tr');
+
+                tr.innerHTML = `
+                <td>${facilities.id}</td>
+                <td>${facilities.schedules}</td>
+                <td>${facilities.logs}</td>
+                <td>${facilities.inventory}</td>
+                <td> <button onClick="editFacility(${facilities.id})">Edit</button></td>
+                <td> <button onClick="deleteFacility(${facilities.id})">Delete</button></td>
+                
+                `;
+                table_body.appendChild(tr);
+            });
+
+        }
+
+
+        function deleteFacility(id) {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        document.querySelector(".table_body").innerHTML = ""
+                        loadFacilities();
+                    } else {
+                        console.error('Failed to delete facility.');
+                    }
+                }
+            };
+            xhr.open('DELETE', 'api.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.send('id=' + id);
+        };
+
+
+        function editFacility(id) {
+            let xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        let facilitiesData = JSON.parse(xhr.responseText);
+                        facilitiesData.map((d) => {
+                            if (d.id == id) {
+                                document.getElementById('editId').value = d.id;
+                                document.getElementById('editSchedules').value = d.schedules;
+                                document.getElementById('editLogs').value = d.logs;
+                                document.getElementById('editInventory').value = d.inventory;
+                                document.getElementById("facilityList").style.display = "none"
+                                document.getElementById('editForm').style.display = 'block';
+                            }
+                        })
+                    }
+                    else {
+                        console.error('Failed to fetch facility data for editing.');
+                    }
+                }
+            };
+            xhr.open('GET', 'api.php', true);
+            xhr.send();
+
+        }
+        function updateFacility() {
+            let id = document.getElementById('editId').value;
+            let schedules = document.getElementById('editSchedules').value;
+            let logs = document.getElementById('editLogs').value;
+            let inventory = document.getElementById('editInventory').value;
+
+            let xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status == 200) {
+                        loadFacilities();
+                        window.location.href = "facilities.html"
+                    } else {
+                        console.error('Failed to update facility.');
+                    }
+                }
+            };
+
+            let data = 'id=' + encodeURIComponent(id) +
+                '&schedules=' + encodeURIComponent(schedules) +
+                '&logs=' + encodeURIComponent(logs) +
+                '&inventory=' + encodeURIComponent(inventory);
+
+            xhr.open("PUT", "api.php", true)
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+            xhr.send(data);
+        }
+
+
+
+        function clearAddForm() {
+            document.getElementById('schedules').value = '';
+            document.getElementById('logs').value = '';
+            document.getElementById('inventory').value = '';
+        }
+
+
+       
+
+
+        
+
+    </script>
+</body>
+
+</html>

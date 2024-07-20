@@ -1,0 +1,43 @@
+
+*{
+    font-size: x-large;
+    background-color: black;
+}
+
+
+
+#addForm{
+
+    width: 50%;
+    border-radius: 10px;
+    border: 2px solid white;
+    box-shadow: rgb(120, 100, 40);
+    margin-left: 20%;
+    margin-top: 10%;
+    padding: 12px;
+    height: 50vh;
+    font-size: x-large;
+
+
+}
+input{
+    padding-top: 20px;
+    padding: 12px;
+    border: 2px solid white;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    color: white;
+}
+input[type]{
+    padding: 12px;
+    padding-top: 20px;
+}
+
+button{
+    padding: 10px;
+    border-radius: 12px;
+    color: white;
+    background-color: aqua;
+
+}
